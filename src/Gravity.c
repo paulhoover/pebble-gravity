@@ -30,22 +30,22 @@ GFont face_font;
 const GPathInfo HOUR_HAND_PATH_POINTS = {
   5,
   (GPoint[]) {
-    {-3, 10},
-    {3, 10},
-    {8, -30},
+    {-4, 15},
+    {4, 15},
+    {10, -30},
     {0, -40},
-    {-8, -30}
+    {-10, -30}
   }
 };
 
 const GPathInfo MINUTE_HAND_PATH_POINTS = {
   5,
   (GPoint[]) {
-    {-3, 10},
-    {3, 10},
-    {8, -55},
+    {-4, 15},
+    {4, 15},
+    {10, -55},
     {0, -65},
-    {-8, -55}
+    {-10, -55}
   }
 };
 
