@@ -25,6 +25,8 @@ Layer dial_layer, hour_layer, minute_layer, second_layer, spindle_layer;
 GPoint centre, v_centre;
 GPath hour_hand, minute_hand, spindle;
 
+GFont face_font;
+
 const GPathInfo HOUR_HAND_PATH_POINTS = {
   5,
   (GPoint[]) {
@@ -88,11 +90,26 @@ void dial_layer_update(Layer *me, GContext *ctx) {
   // Draw some dial markings
   graphics_context_set_fill_color(ctx, FOREGROUND);
   for (int i=0; i<12; i++) {
-    float angle = get_angle(12, i);
-    GPoint pip;
-    get_point_at_angle(&pip, angle, DIAL_RADIUS);
-    graphics_fill_circle(ctx, pip, 4);
+    // if (i % 3 != 0) { // We'll draw numbers for the quarter-hour later.
+    if (i != 0) {
+      float angle = get_angle(12, i);
+      GPoint pip;
+      get_point_at_angle(&pip, angle, DIAL_RADIUS);
+      graphics_fill_circle(ctx, pip, 4);
+    }
   }
+  face_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_STANISLAV_36));
+  // Draw a 12
+  GPoint num_point;
+  get_point_at_angle(&num_point, get_angle(12, 0), DIAL_RADIUS);
+  graphics_text_draw(ctx, "1", face_font,
+		     GRect(num_point.x-16, num_point.y-27, 20, 40),
+		     GTextOverflowModeTrailingEllipsis,
+		     GTextAlignmentCenter, NULL);
+  graphics_text_draw(ctx, "2", face_font,
+		     GRect(num_point.x-4, num_point.y-23, 20, 40),
+		     GTextOverflowModeTrailingEllipsis,
+		     GTextAlignmentCenter, NULL);
 }
 
 void second_layer_update(Layer *me, GContext *ctx) {
@@ -152,7 +169,7 @@ void handle_tick(AppContextRef ctx, PebbleTickEvent *t) {
 }
 
 void handle_init(AppContextRef ctx) {
-
+  resource_init_current_app(&APP_RESOURCES);
   window_init(&window, "Gravity");
   window_stack_push(&window, true /* Animated */);
 

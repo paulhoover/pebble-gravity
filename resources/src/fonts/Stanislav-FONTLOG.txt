@@ -1,0 +1,46 @@
+FONTLOG
+Stanislav font
+==========================
+
+This file provides detailed information on the Stanislav font. This information
+should be distributed along with the Stanislav font and any derivative works.
+
+
+Basic Font Information
+----------------------
+
+Stanislav is a small-caps flare-serif font with a relatively low x-height. It
+features support for most European and Turkic languages. OpenType anchors are
+provided for placement of combining diacritics.
+
+ChangeLog
+---------
+2013-03-15  Initial release
+2013-03-21  Lowered curly quotes and thickened upright stroke of D
+
+Information for Contributors
+----------------------------
+
+This font is licensed under the Open Font License (OFL).  There is no Reserved
+Name clause for the Stanislav font, enabling the free conversion between font
+formats.
+
+You can read more about the OFL here:
+http://scripts.sil.org/OFL
+
+If you'd like to make changes to the original font, you are free to contact
+the author of the original font (for contact information, please see the
+"Contributors" section below).  Glyph changes should be in a FontForge .sfd
+file (please make sure your version of FontForge is reasonably up-to-date).
+Please send *only* the changed glyphs, not the entire font range.  The author
+reserves the right to reject or modify any contributions.  If your contribution
+is accepted, your name will appear in the Contributors section (unless you
+specify otherwise).
+
+
+Contributors
+------------
+
+Daniel Johnson (font maintainer)
+il.basso.buffo at gmail dot com
+http://danieljohnson.name

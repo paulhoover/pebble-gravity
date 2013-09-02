@@ -1,11 +1,16 @@
 
-{"friendlyVersion": "VERSION",
- "versionDefName": "VERSION",
+{"friendlyVersion": "1.0",
+ "versionDefName": "APP_RESOURCES",
  "media": [
-	   {
-	    "type":"raw",
-	    "defName":"DUMMY",
-	    "file":"resource_map.json"
-	   }
-	  ]
+     {
+	 "type":"font",
+	 "defName":"FONT_STANISLAV_36",
+	 "file":"fonts/Stanislav.ttf"
+     },
+     {
+	 "type":"raw",
+	 "defName":"DUMMY",
+	 "file":"resource_map.json"
+     }
+ ]
 }
