@@ -28,22 +28,22 @@ GPath hour_hand, minute_hand;
 const GPathInfo HOUR_HAND_PATH_POINTS = {
   5,
   (GPoint[]) {
-    {-4, 2},
-    {4, 2},
-    {4, -30},
+    {-3, 10},
+    {3, 10},
+    {8, -30},
     {0, -40},
-    {-4, -30}
+    {-8, -30}
   }
 };
 
 const GPathInfo MINUTE_HAND_PATH_POINTS = {
   5,
   (GPoint[]) {
-    {-4, 2},
-    {4, 2},
-    {4, -55},
+    {-3, 10},
+    {3, 10},
+    {8, -55},
     {0, -65},
-    {-4, -55}
+    {-8, -55}
   }
 };
 
