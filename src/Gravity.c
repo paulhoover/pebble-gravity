@@ -133,9 +133,12 @@ void second_layer_update(Layer *me, GContext *ctx) {
 
   float angle = get_angle(60, now.tm_sec);
   GPoint sec;
-  get_point_at_angle(&sec, angle, DIAL_RADIUS-2);
+  get_point_at_angle(&sec, angle, DIAL_RADIUS-8);
   graphics_context_set_stroke_color(ctx, FOREGROUND);
   graphics_draw_line(ctx, centre, sec);
+  get_point_at_angle(&sec, angle, DIAL_RADIUS-18);
+  graphics_context_set_fill_color(ctx, FOREGROUND);
+  graphics_fill_circle(ctx, sec, 7);
 }
 
 void minute_layer_update(Layer *me, GContext *ctx) {
