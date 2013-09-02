@@ -49,6 +49,7 @@ const GPathInfo MINUTE_HAND_PATH_POINTS = {
   }
 };
 
+// Thanks to @nerdi for drawing a tiny tiny bolt for me!
 const GPathInfo BOLT_PATH_POINTS = {
   6,
   (GPoint[]) {
@@ -97,7 +98,6 @@ void dial_layer_update(Layer *me, GContext *ctx) {
       graphics_fill_circle(ctx, pip, 4);
     }
   }
-  face_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_STANISLAV_36));
   // The 12 is separated so we can drop half of it.
   GPoint num_point;
   get_point_at_angle(&num_point, get_angle(12, 0), DIAL_RADIUS);
@@ -190,6 +190,8 @@ void handle_init(AppContextRef ctx) {
   resource_init_current_app(&APP_RESOURCES);
   window_init(&window, "Gravity");
   window_stack_push(&window, true /* Animated */);
+
+  face_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_STANISLAV_36));
 
   centre = grect_center_point(&window.layer.frame);
   v_centre = GPoint(centre.x, (centre.y-V_OFFSET));
