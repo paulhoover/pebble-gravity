@@ -21,9 +21,9 @@ PBL_APP_INFO(MY_UUID,
 
 Window window;
 
-Layer dial_layer, hour_layer, minute_layer, second_layer;
+Layer dial_layer, hour_layer, minute_layer, second_layer, spindle_layer;
 GPoint centre, v_centre;
-GPath hour_hand, minute_hand;
+GPath hour_hand, minute_hand, spindle;
 
 const GPathInfo HOUR_HAND_PATH_POINTS = {
   5,
@@ -44,6 +44,18 @@ const GPathInfo MINUTE_HAND_PATH_POINTS = {
     {8, -55},
     {0, -65},
     {-8, -55}
+  }
+};
+
+const GPathInfo BOLT_PATH_POINTS = {
+  6,
+  (GPoint[]) {
+    {-9, 0},
+    {-5, 8},
+    {5, 8},
+    {9, 0},
+    {5, -8},
+    {-5, -8}
   }
 };
 
@@ -81,8 +93,6 @@ void dial_layer_update(Layer *me, GContext *ctx) {
     get_point_at_angle(&pip, angle, DIAL_RADIUS);
     graphics_fill_circle(ctx, pip, 4);
   }
-  // Draw a centre marking
-  graphics_fill_circle(ctx, centre, 4);
 }
 
 void second_layer_update(Layer *me, GContext *ctx) {
@@ -125,6 +135,15 @@ void hour_layer_update(Layer *me, GContext *ctx) {
   gpath_draw_outline(ctx, &hour_hand);
 }
 
+void spindle_layer_update(Layer *me, GContext *ctx) {
+    graphics_context_set_fill_color(ctx, FOREGROUND);
+    graphics_context_set_stroke_color(ctx, BACKGROUND);
+    gpath_draw_filled(ctx, &spindle);
+    gpath_draw_outline(ctx, &spindle);
+
+    graphics_draw_circle(ctx, centre, 3);
+}
+
 void handle_tick(AppContextRef ctx, PebbleTickEvent *t) {
   layer_mark_dirty(&second_layer);
   if (t->tick_time->tm_sec % 10 == 0) {
@@ -153,11 +172,17 @@ void handle_init(AppContextRef ctx) {
   layer_add_child(&window.layer, &minute_layer);
   layer_add_child(&window.layer, &hour_layer);
 
+  layer_init(&spindle_layer, window.layer.bounds);
+  spindle_layer.update_proc = spindle_layer_update;
+  layer_add_child(&window.layer, &spindle_layer);
+
   // init hands
   gpath_init(&minute_hand, &MINUTE_HAND_PATH_POINTS);
   gpath_move_to(&minute_hand, centre);
   gpath_init(&hour_hand, &HOUR_HAND_PATH_POINTS);
   gpath_move_to(&hour_hand, centre);
+  gpath_init(&spindle, &BOLT_PATH_POINTS);
+  gpath_move_to(&spindle, centre);
 }
 
 
