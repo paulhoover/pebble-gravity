@@ -24,8 +24,9 @@ Window window;
 Layer dial_layer, hour_layer, minute_layer, second_layer, spindle_layer;
 GPoint centre, v_centre;
 GPath hour_hand, minute_hand, spindle;
-
 GFont face_font;
+GPoint second_points[60][2]; // Cache for points for second hand elements.
+float hand_angles[360]; // Cache for minute and hour hand angles.
 
 const GPathInfo HOUR_HAND_PATH_POINTS = {
   5,
@@ -131,14 +132,18 @@ void second_layer_update(Layer *me, GContext *ctx) {
   PblTm now;
   get_time(&now);
 
-  float angle = get_angle(60, now.tm_sec);
-  GPoint sec;
-  get_point_at_angle(&sec, angle, DIAL_RADIUS-8);
+  if (second_points[now.tm_sec][0].x == 0) { // points have not been cached
+    float angle = get_angle(60, now.tm_sec);
+    GPoint sec;
+    // end of second hand
+    get_point_at_angle(&second_points[now.tm_sec][0], angle, DIAL_RADIUS-8);
+    // centre of circle on second hand
+    get_point_at_angle(&second_points[now.tm_sec][1], angle, DIAL_RADIUS-18);
+  }
   graphics_context_set_stroke_color(ctx, FOREGROUND);
-  graphics_draw_line(ctx, centre, sec);
-  get_point_at_angle(&sec, angle, DIAL_RADIUS-18);
   graphics_context_set_fill_color(ctx, FOREGROUND);
-  graphics_fill_circle(ctx, sec, 7);
+  graphics_draw_line(ctx, centre, second_points[now.tm_sec][0]);
+  graphics_fill_circle(ctx, second_points[now.tm_sec][1], 7);
 }
 
 void minute_layer_update(Layer *me, GContext *ctx) {
@@ -147,8 +152,10 @@ void minute_layer_update(Layer *me, GContext *ctx) {
 
   // Want to update every ten seconds; 6 events per minute.
   int16_t offset = now.tm_min*6 + (now.tm_sec / 10);
-  float angle = get_angle(360, offset);
-  gpath_rotate_to(&minute_hand, angle);
+  if (hand_angles[offset] == 10) { // angle has not been cached
+    hand_angles[offset] = get_angle(360, offset);
+  }
+  gpath_rotate_to(&minute_hand, hand_angles[offset]);
 
   graphics_context_set_fill_color(ctx, FOREGROUND);
   graphics_context_set_stroke_color(ctx, BACKGROUND);
@@ -161,8 +168,10 @@ void hour_layer_update(Layer *me, GContext *ctx) {
   get_time(&now);
 
   int16_t offset = now.tm_hour*30 + (now.tm_min / 2);
-  float angle = get_angle(360, offset);
-  gpath_rotate_to(&hour_hand, angle);
+  if (hand_angles[offset] == 10) { // angle has not been cached
+    hand_angles[offset] = get_angle(360, offset);
+  }
+  gpath_rotate_to(&hour_hand, hand_angles[offset]);
 
   graphics_context_set_fill_color(ctx, FOREGROUND);
   graphics_context_set_stroke_color(ctx, BACKGROUND);
@@ -193,9 +202,18 @@ void handle_init(AppContextRef ctx) {
 
   face_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_STANISLAV_36));
 
-  // Initialise centre points.
+  // Initialise centre points and hand caches
   centre = grect_center_point(&window.layer.frame);
   v_centre = GPoint(centre.x, (centre.y-V_OFFSET));
+  for (int i=0; i<60; i++) {
+    second_points[i][0].x = 0;
+    second_points[i][0].y = 0;
+    second_points[i][1].x = 0;
+    second_points[i][1].y = 0;
+  }
+  for (int i=0; i<360; i++) {
+    hand_angles[i] = 10; // 0 is a valid angle, so pick something else
+  }
 
   // Initialise layers
   layer_init(&dial_layer, window.layer.bounds);
