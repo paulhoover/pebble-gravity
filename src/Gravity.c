@@ -193,9 +193,11 @@ void handle_init(AppContextRef ctx) {
 
   face_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_STANISLAV_36));
 
+  // Initialise centre points.
   centre = grect_center_point(&window.layer.frame);
   v_centre = GPoint(centre.x, (centre.y-V_OFFSET));
 
+  // Initialise layers
   layer_init(&dial_layer, window.layer.bounds);
   dial_layer.update_proc = dial_layer_update;
   layer_init(&second_layer, window.layer.bounds);
@@ -208,12 +210,11 @@ void handle_init(AppContextRef ctx) {
   layer_add_child(&window.layer, &second_layer);
   layer_add_child(&window.layer, &minute_layer);
   layer_add_child(&window.layer, &hour_layer);
-
   layer_init(&spindle_layer, window.layer.bounds);
   spindle_layer.update_proc = spindle_layer_update;
   layer_add_child(&window.layer, &spindle_layer);
 
-  // init hands
+  // Initialise hands
   gpath_init(&minute_hand, &MINUTE_HAND_PATH_POINTS);
   gpath_move_to(&minute_hand, centre);
   gpath_init(&hour_hand, &HOUR_HAND_PATH_POINTS);
