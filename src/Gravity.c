@@ -90,8 +90,7 @@ void dial_layer_update(Layer *me, GContext *ctx) {
   // Draw some dial markings
   graphics_context_set_fill_color(ctx, FOREGROUND);
   for (int i=0; i<12; i++) {
-    // if (i % 3 != 0) { // We'll draw numbers for the quarter-hour later.
-    if (i != 0) {
+    if (i % 3 != 0) { // We'll draw numbers for the quarter-hour later.
       float angle = get_angle(12, i);
       GPoint pip;
       get_point_at_angle(&pip, angle, DIAL_RADIUS);
@@ -99,7 +98,7 @@ void dial_layer_update(Layer *me, GContext *ctx) {
     }
   }
   face_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_STANISLAV_36));
-  // Draw a 12
+  // The 12 is separated so we can drop half of it.
   GPoint num_point;
   get_point_at_angle(&num_point, get_angle(12, 0), DIAL_RADIUS);
   graphics_text_draw(ctx, "1", face_font,
@@ -108,6 +107,22 @@ void dial_layer_update(Layer *me, GContext *ctx) {
 		     GTextAlignmentCenter, NULL);
   graphics_text_draw(ctx, "2", face_font,
 		     GRect(num_point.x-4, num_point.y-23, 20, 40),
+		     GTextOverflowModeTrailingEllipsis,
+		     GTextAlignmentCenter, NULL);
+  // The rest are a bit simpler.
+  get_point_at_angle(&num_point, get_angle(12, 3), DIAL_RADIUS);
+  graphics_text_draw(ctx, "3", face_font,
+		     GRect(num_point.x-10, num_point.y-28, 20, 40),
+		     GTextOverflowModeTrailingEllipsis,
+		     GTextAlignmentCenter, NULL);
+  get_point_at_angle(&num_point, get_angle(12, 6), DIAL_RADIUS);
+  graphics_text_draw(ctx, "6", face_font,
+		     GRect(num_point.x-8, num_point.y-24, 20, 40),
+		     GTextOverflowModeTrailingEllipsis,
+		     GTextAlignmentCenter, NULL);
+  get_point_at_angle(&num_point, get_angle(12, 9), DIAL_RADIUS);
+  graphics_text_draw(ctx, "9", face_font,
+		     GRect(num_point.x-8, num_point.y-28, 20, 40),
 		     GTextOverflowModeTrailingEllipsis,
 		     GTextAlignmentCenter, NULL);
 }
