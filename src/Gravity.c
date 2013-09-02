@@ -24,8 +24,9 @@ Window window;
 Layer dial_layer, hour_layer, minute_layer, second_layer, spindle_layer;
 GPoint centre, v_centre;
 GPath hour_hand, minute_hand, spindle;
-
 GFont face_font;
+GPoint second_points[60][2]; // Cache for points for second hand elements.
+float hand_angles[360]; // Cache for minute and hour hand angles.
 
 const GPathInfo HOUR_HAND_PATH_POINTS = {
   5,
@@ -49,7 +50,7 @@ const GPathInfo MINUTE_HAND_PATH_POINTS = {
   }
 };
 
-// Thanks to @nerdi for drawing a tiny bolt for me.
+// Thanks to @nerdi for drawing a tiny tiny bolt for me!
 const GPathInfo BOLT_PATH_POINTS = {
   6,
   (GPoint[]) {
@@ -62,13 +63,9 @@ const GPathInfo BOLT_PATH_POINTS = {
   }
 };
 
-GPoint second_points[60][2];
-float hand_angles[360];
-
 float get_angle(int16_t divisions, uint16_t count) {
   /* Theory here:
      We use divisions and count to figure the virtual angle from v_centre.
-     This is done the same way it would for a regular analogue face.
      We know the distance from real centre to v_centre, and the radius
      of the circle around the real centre. These form a SSA triangle.
      We then solve it using the law of sines for the angle from the 
@@ -102,7 +99,6 @@ void dial_layer_update(Layer *me, GContext *ctx) {
       graphics_fill_circle(ctx, pip, 4);
     }
   }
-  face_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_STANISLAV_36));
   // The 12 is separated so we can drop half of it.
   GPoint num_point;
   get_point_at_angle(&num_point, get_angle(12, 0), DIAL_RADIUS);
@@ -136,11 +132,12 @@ void second_layer_update(Layer *me, GContext *ctx) {
   PblTm now;
   get_time(&now);
 
-  if (second_points[now.tm_sec][0].x == 0) {
-    // Points have not been cached
+  if (second_points[now.tm_sec][0].x == 0) { // points have not been cached
     float angle = get_angle(60, now.tm_sec);
     GPoint sec;
+    // end of second hand
     get_point_at_angle(&second_points[now.tm_sec][0], angle, DIAL_RADIUS-8);
+    // centre of circle on second hand
     get_point_at_angle(&second_points[now.tm_sec][1], angle, DIAL_RADIUS-18);
   }
   graphics_context_set_stroke_color(ctx, FOREGROUND);
@@ -155,8 +152,7 @@ void minute_layer_update(Layer *me, GContext *ctx) {
 
   // Want to update every ten seconds; 6 events per minute.
   int16_t offset = now.tm_min*6 + (now.tm_sec / 10);
-  if (hand_angles[offset] == 0) {
-    // Angle has not been cached
+  if (hand_angles[offset] == 10) { // angle has not been cached
     hand_angles[offset] = get_angle(360, offset);
   }
   gpath_rotate_to(&minute_hand, hand_angles[offset]);
@@ -172,7 +168,7 @@ void hour_layer_update(Layer *me, GContext *ctx) {
   get_time(&now);
 
   int16_t offset = now.tm_hour*30 + (now.tm_min / 2);
-  if (hand_angles[offset] == 0) {
+  if (hand_angles[offset] == 10) { // angle has not been cached
     hand_angles[offset] = get_angle(360, offset);
   }
   gpath_rotate_to(&hour_hand, hand_angles[offset]);
@@ -204,7 +200,9 @@ void handle_init(AppContextRef ctx) {
   window_init(&window, "Gravity");
   window_stack_push(&window, true /* Animated */);
 
-  // Initialise centres and hand cache variables
+  face_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_STANISLAV_36));
+
+  // Initialise centre points and hand caches
   centre = grect_center_point(&window.layer.frame);
   v_centre = GPoint(centre.x, (centre.y-V_OFFSET));
   for (int i=0; i<60; i++) {
@@ -214,7 +212,7 @@ void handle_init(AppContextRef ctx) {
     second_points[i][1].y = 0;
   }
   for (int i=0; i<360; i++) {
-    hand_angles[i] = 0;
+    hand_angles[i] = 10; // 0 is a valid angle, so pick something else
   }
 
   // Initialise layers
