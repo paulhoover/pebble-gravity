@@ -7,7 +7,7 @@
 #define MY_UUID { 0x7B, 0x4E, 0x89, 0x33, 0x1E, 0x3F, 0x4B, 0x57, 0xBE, 0x13, 0xD0, 0x7D, 0x76, 0xB6, 0x14, 0x17 }
 PBL_APP_INFO(MY_UUID,
              "Gravity", "Kids, Inc.",
-             1, 0, /* App version */
+             1, 1, /* App version */
              DEFAULT_MENU_ICON,
              APP_INFO_WATCH_FACE);
 
@@ -167,7 +167,7 @@ void hour_layer_update(Layer *me, GContext *ctx) {
   PblTm now;
   get_time(&now);
 
-  int16_t offset = now.tm_hour*30 + (now.tm_min / 2);
+  int16_t offset = (now.tm_hour%12)*30 + (now.tm_min / 2);
   if (hand_angles[offset] == 10) { // angle has not been cached
     hand_angles[offset] = get_angle(360, offset);
   }
