@@ -99,6 +99,7 @@ void dial_layer_update(Layer *me, GContext *ctx) {
       graphics_fill_circle(ctx, pip, 4);
     }
   }
+  graphics_context_set_text_color(ctx, FOREGROUND);
   // The 12 is separated so we can drop half of it.
   GPoint num_point;
   get_point_at_angle(&num_point, get_angle(12, 0), DIAL_RADIUS);
