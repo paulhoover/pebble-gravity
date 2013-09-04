@@ -4,15 +4,25 @@
 
 #include "my_math.h"
 
-#define MY_UUID { 0x7B, 0x4E, 0x89, 0x33, 0x1E, 0x3F, 0x4B, 0x57, 0xBE, 0x13, 0xD0, 0x7D, 0x76, 0xB6, 0x14, 0x17 }
-PBL_APP_INFO(MY_UUID,
-             "Gravity", "Kids, Inc.",
-             1, 1, /* App version */
-             DEFAULT_MENU_ICON,
-             APP_INFO_WATCH_FACE);
+#include "config.h"
 
+#ifdef INVERTED
+#define FOREGROUND GColorBlack
+#define BACKGROUND GColorWhite
+#define APP_NAME "Gravity Inverted"
+#define MY_UUID { 0x7A, 0xAB, 0xF7, 0xB2, 0x0B, 0x49, 0x48, 0x61, 0xA2, 0x17, 0x28, 0x24, 0x8B, 0xEF, 0x43, 0x5C }
+#else
 #define FOREGROUND GColorWhite
 #define BACKGROUND GColorBlack
+#define APP_NAME "Gravity"
+#define MY_UUID { 0x7B, 0x4E, 0x89, 0x33, 0x1E, 0x3F, 0x4B, 0x57, 0xBE, 0x13, 0xD0, 0x7D, 0x76, 0xB6, 0x14, 0x17 }
+#endif
+
+PBL_APP_INFO(MY_UUID,
+             APP_NAME, "Kids, Inc.",
+             1, 2, /* App version */
+             DEFAULT_MENU_ICON,
+             APP_INFO_WATCH_FACE);
 
 #define DIAL_RADIUS 70
 #define V_OFFSET 25
