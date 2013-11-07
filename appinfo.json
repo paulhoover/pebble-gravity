@@ -1,0 +1,23 @@
+{
+    "uuid": "2cd2dae7-a295-4b8d-bd54-c1ffd1eb4bc3",
+    "shortName": "Gravity",
+    "longName": "Gravity",
+    "companyName": "Kids, Inc.",
+    "versionCode": 1,
+    "versionLabel": "1.0.0",
+    "watchapp": {
+	"watchface": true
+    },
+    "appKeys": {
+	"dummy": 0
+    },
+    "resources": {
+	"media": [
+	    {
+		"type":"font",
+		"name":"FONT_STANISLAV_36",
+		"file":"fonts/Stanislav.ttf"
+	    }
+	]
+    }
+}
