@@ -8,8 +8,11 @@
     "watchapp": {
 	"watchface": true
     },
+    "capabilities": [
+	"configurable"
+    ],
     "appKeys": {
-	"dummy": 0
+	"facestyle": 82
     },
     "resources": {
 	"media": [

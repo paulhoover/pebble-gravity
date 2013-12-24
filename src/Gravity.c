@@ -2,15 +2,24 @@
 
 #include "my_math.h"
 
-#define FOREGROUND GColorWhite
-#define BACKGROUND GColorBlack
-
 #define DIAL_RADIUS 70
 #define V_OFFSET 25
 
 #define RADS 2*M_PI
 
 Window *root_window;
+
+static GColor FGColor = GColorWhite;
+static GColor BGColor = GColorBlack;
+
+enum {
+  CONFIG_KEY_FACESTYLE = 0x52
+};
+
+enum {
+  REGULAR_STYLE = 1,
+  INVERTED_STYLE = 2
+};
 
 Layer *dial_layer, *hour_layer, *minute_layer, *second_layer, *spindle_layer;
 GPoint centre, v_centre;
@@ -54,6 +63,49 @@ const GPathInfo BOLT_PATH_POINTS = {
   }
 };
 
+void read_config() {
+  if (persist_exists(CONFIG_KEY_FACESTYLE)) {
+    int savedstyle = persist_read_int(CONFIG_KEY_FACESTYLE);
+    if (savedstyle == INVERTED_STYLE) {
+      FGColor = GColorBlack;
+      BGColor = GColorWhite;
+    }
+  }
+}
+
+void in_dropped_handler(AppMessageResult reason, void *context) {
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Data from phone dropped");
+}
+
+void in_received_handler(DictionaryIterator *received, void *context) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Data packet received");
+  Tuple *remote_facestyle_tuple = dict_find(received, CONFIG_KEY_FACESTYLE);
+  if (remote_facestyle_tuple) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Got facestyle");
+    int new_style = remote_facestyle_tuple->value->uint8;
+    // BETA 3 seems to be sending single chars as bytes instead of ints
+    // so we correct here.
+    new_style = new_style-48;
+    if (new_style == REGULAR_STYLE) {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "Switching to regular face");
+      FGColor = GColorWhite;
+      BGColor = GColorBlack;
+      persist_write_int(CONFIG_KEY_FACESTYLE, REGULAR_STYLE);
+    } else if (new_style == INVERTED_STYLE) {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "Switching to inverted face");
+      FGColor = GColorBlack;
+      BGColor = GColorWhite;
+      persist_write_int(CONFIG_KEY_FACESTYLE, INVERTED_STYLE);
+    } else {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "fuck");
+      static char bleh[3];
+      snprintf(bleh, 3, "%i", new_style);
+      APP_LOG(APP_LOG_LEVEL_DEBUG, bleh);
+      layer_mark_dirty(dial_layer);
+    }
+  }
+}
+
 float get_angle(int16_t divisions, uint16_t count) {
   /* Theory here:
      We use divisions and count to figure the virtual angle from v_centre.
@@ -77,11 +129,11 @@ void get_point_at_angle(GPoint *target, float angle, int8_t length) {
 }
 
 void dial_layer_update(Layer *me, GContext *ctx) {
-  graphics_context_set_fill_color(ctx, BACKGROUND);
+  graphics_context_set_fill_color(ctx, BGColor);
   graphics_fill_rect(ctx, layer_get_bounds(dial_layer), 0, GCornerNone);
 
   // Draw some dial markings
-  graphics_context_set_fill_color(ctx, FOREGROUND);
+  graphics_context_set_fill_color(ctx, FGColor);
   for (int i=0; i<12; i++) {
     if (i % 3 != 0) { // We'll draw numbers for the quarter-hour later.
       float angle = get_angle(12, i);
@@ -90,7 +142,7 @@ void dial_layer_update(Layer *me, GContext *ctx) {
       graphics_fill_circle(ctx, pip, 4);
     }
   }
-  graphics_context_set_text_color(ctx, FOREGROUND);
+  graphics_context_set_text_color(ctx, FGColor);
   // The 12 is separated so we can drop half of it.
   GPoint num_point;
   get_point_at_angle(&num_point, get_angle(12, 0), DIAL_RADIUS);
@@ -131,8 +183,8 @@ void second_layer_update(Layer *me, GContext *ctx) {
     // centre of circle on second hand
     get_point_at_angle(&second_points[now->tm_sec][1], angle, DIAL_RADIUS-18);
   }
-  graphics_context_set_stroke_color(ctx, FOREGROUND);
-  graphics_context_set_fill_color(ctx, FOREGROUND);
+  graphics_context_set_stroke_color(ctx, FGColor);
+  graphics_context_set_fill_color(ctx, FGColor);
   graphics_draw_line(ctx, centre, second_points[now->tm_sec][0]);
   graphics_fill_circle(ctx, second_points[now->tm_sec][1], 7);
 }
@@ -148,8 +200,8 @@ void minute_layer_update(Layer *me, GContext *ctx) {
   }
   gpath_rotate_to(minute_hand, hand_angles[offset]);
 
-  graphics_context_set_fill_color(ctx, FOREGROUND);
-  graphics_context_set_stroke_color(ctx, BACKGROUND);
+  graphics_context_set_fill_color(ctx, FGColor);
+  graphics_context_set_stroke_color(ctx, BGColor);
   gpath_draw_filled(ctx, minute_hand);
   gpath_draw_outline(ctx, minute_hand);
 }
@@ -164,15 +216,15 @@ void hour_layer_update(Layer *me, GContext *ctx) {
   }
   gpath_rotate_to(hour_hand, hand_angles[offset]);
 
-  graphics_context_set_fill_color(ctx, FOREGROUND);
-  graphics_context_set_stroke_color(ctx, BACKGROUND);
+  graphics_context_set_fill_color(ctx, FGColor);
+  graphics_context_set_stroke_color(ctx, BGColor);
   gpath_draw_filled(ctx, hour_hand);
   gpath_draw_outline(ctx, hour_hand);
 }
 
 void spindle_layer_update(Layer *me, GContext *ctx) {
-    graphics_context_set_fill_color(ctx, FOREGROUND);
-    graphics_context_set_stroke_color(ctx, BACKGROUND);
+    graphics_context_set_fill_color(ctx, FGColor);
+    graphics_context_set_stroke_color(ctx, BGColor);
     gpath_draw_filled(ctx, spindle);
     gpath_draw_outline(ctx, spindle);
 
@@ -187,6 +239,14 @@ void handle_tick(struct tm *t, TimeUnits units_changed) {
 }
 
 void init() {
+  read_config();
+
+  app_message_register_inbox_received(in_received_handler);
+  app_message_register_inbox_dropped(in_dropped_handler);
+  const uint32_t inbound_size = 64;
+  const uint32_t outbound_size = 64;
+  app_message_open(inbound_size, outbound_size);
+
   root_window = window_create();
   window_stack_push(root_window, true /* Animated */);
 
