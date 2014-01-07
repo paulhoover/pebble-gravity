@@ -8,7 +8,7 @@ function appMessageNack(e) {
 
 Pebble.addEventListener('showConfiguration', function() {
     console.log('showing configuration');
-    Pebble.openURL('http://hardy.dropbear.id.au/pebble/Gravity/config/test.html');
+    Pebble.openURL('http://hardy.dropbear.id.au/pebble/Gravity/config/2-0.html');
 });
 
 Pebble.addEventListener('webviewclosed', function(e) {
