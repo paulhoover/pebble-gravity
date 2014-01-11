@@ -3,8 +3,8 @@
     "shortName": "Gravity",
     "longName": "Gravity",
     "companyName": "Kids, Inc.",
-    "versionCode": 3,
-    "versionLabel": "2.1.0",
+    "versionCode": 4,
+    "versionLabel": "2.1.1",
     "watchapp": {
 	"watchface": true
     },
