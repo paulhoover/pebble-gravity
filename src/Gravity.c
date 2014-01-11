@@ -147,27 +147,27 @@ void dial_layer_update(Layer *me, GContext *ctx) {
   GPoint num_point;
   get_point_at_angle(&num_point, get_angle(12, 0), DIAL_RADIUS);
   graphics_draw_text(ctx, "1", face_font,
-		     GRect(num_point.x-16, num_point.y-27, 20, 40),
+		     GRect(num_point.x-16, num_point.y-27, 20, 45),
 		     GTextOverflowModeTrailingEllipsis,
 		     GTextAlignmentCenter, NULL);
   graphics_draw_text(ctx, "2", face_font,
-		     GRect(num_point.x-4, num_point.y-23, 20, 40),
+		     GRect(num_point.x-4, num_point.y-23, 20, 45),
 		     GTextOverflowModeTrailingEllipsis,
 		     GTextAlignmentCenter, NULL);
   // The rest are a bit simpler.
   get_point_at_angle(&num_point, get_angle(12, 3), DIAL_RADIUS);
   graphics_draw_text(ctx, "3", face_font,
-		     GRect(num_point.x-10, num_point.y-28, 20, 40),
+		     GRect(num_point.x-10, num_point.y-28, 20, 45),
 		     GTextOverflowModeTrailingEllipsis,
 		     GTextAlignmentCenter, NULL);
   get_point_at_angle(&num_point, get_angle(12, 6), DIAL_RADIUS);
   graphics_draw_text(ctx, "6", face_font,
-		     GRect(num_point.x-8, num_point.y-24, 20, 40),
+		     GRect(num_point.x-8, num_point.y-24, 20, 45),
 		     GTextOverflowModeTrailingEllipsis,
 		     GTextAlignmentCenter, NULL);
   get_point_at_angle(&num_point, get_angle(12, 9), DIAL_RADIUS);
   graphics_draw_text(ctx, "9", face_font,
-		     GRect(num_point.x-8, num_point.y-28, 20, 40),
+		     GRect(num_point.x-8, num_point.y-28, 20, 45),
 		     GTextOverflowModeTrailingEllipsis,
 		     GTextAlignmentCenter, NULL);
 }
