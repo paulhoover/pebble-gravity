@@ -74,10 +74,14 @@ void read_config() {
 }
 
 void in_dropped_handler(AppMessageResult reason, void *context) {
+  (void)reason;
+  (void)context;
   APP_LOG(APP_LOG_LEVEL_ERROR, "Data from phone dropped");
 }
 
 void in_received_handler(DictionaryIterator *received, void *context) {
+  (void)received;
+  (void)context;
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Data packet received");
   Tuple *remote_facestyle_tuple = dict_find(received, CONFIG_KEY_FACESTYLE);
   if (remote_facestyle_tuple) {
@@ -96,13 +100,8 @@ void in_received_handler(DictionaryIterator *received, void *context) {
       FGColor = GColorBlack;
       BGColor = GColorWhite;
       persist_write_int(CONFIG_KEY_FACESTYLE, INVERTED_STYLE);
-    } else {
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "fuck");
-      static char bleh[3];
-      snprintf(bleh, 3, "%i", new_style);
-      APP_LOG(APP_LOG_LEVEL_DEBUG, bleh);
-      layer_mark_dirty(dial_layer);
     }
+    layer_mark_dirty(dial_layer);
   }
 }
 
@@ -129,6 +128,7 @@ void get_point_at_angle(GPoint *target, float angle, int8_t length) {
 }
 
 void dial_layer_update(Layer *me, GContext *ctx) {
+  (void)me;
   graphics_context_set_fill_color(ctx, BGColor);
   graphics_fill_rect(ctx, layer_get_bounds(dial_layer), 0, GCornerNone);
 
@@ -173,6 +173,7 @@ void dial_layer_update(Layer *me, GContext *ctx) {
 }
 
 void second_layer_update(Layer *me, GContext *ctx) {
+  (void)me;
   time_t t = time(NULL);
   struct tm *now = localtime(&t);
 
@@ -190,6 +191,7 @@ void second_layer_update(Layer *me, GContext *ctx) {
 }
 
 void minute_layer_update(Layer *me, GContext *ctx) {
+  (void)me;
   time_t t = time(NULL);
   struct tm *now = localtime(&t);
 
@@ -207,6 +209,7 @@ void minute_layer_update(Layer *me, GContext *ctx) {
 }
 
 void hour_layer_update(Layer *me, GContext *ctx) {
+  (void)me;
   time_t t = time(NULL);
   struct tm *now = localtime(&t);
 
@@ -223,15 +226,17 @@ void hour_layer_update(Layer *me, GContext *ctx) {
 }
 
 void spindle_layer_update(Layer *me, GContext *ctx) {
-    graphics_context_set_fill_color(ctx, FGColor);
-    graphics_context_set_stroke_color(ctx, BGColor);
-    gpath_draw_filled(ctx, spindle);
-    gpath_draw_outline(ctx, spindle);
+  (void)me;
+  graphics_context_set_fill_color(ctx, FGColor);
+  graphics_context_set_stroke_color(ctx, BGColor);
+  gpath_draw_filled(ctx, spindle);
+  gpath_draw_outline(ctx, spindle);
 
-    graphics_draw_circle(ctx, centre, 3);
+  graphics_draw_circle(ctx, centre, 3);
 }
 
 void handle_tick(struct tm *t, TimeUnits units_changed) {
+  (void)units_changed;
   layer_mark_dirty(second_layer);
   if (t->tm_sec % 10 == 0) {
     layer_mark_dirty(minute_layer);
