@@ -87,7 +87,7 @@ void in_received_handler(DictionaryIterator *received, void *context) {
   if (remote_facestyle_tuple) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Got facestyle");
     int new_style = remote_facestyle_tuple->value->uint8;
-    // BETA 3 seems to be sending single chars as bytes instead of ints
+    // BETA 3 seems to be sending single digits as bytes instead of ints
     // so we correct here.
     new_style = new_style-48;
     if (new_style == REGULAR_STYLE) {
