@@ -19,6 +19,10 @@ only one that ended up being feasible:
   distance from actual centre to edge point is the watchface radius).
 * We try really hard to remember high-school trigonometry, and use the
   law of sines to calculate the angle at the actual centre point.
+  Technically this form of the law has two solutions, but by keeping
+  the destance between virtual and actual centres less than the
+  watchface radius we make sure there's only one solution and avoid
+  horrible case-checking code.
 * And finally triumphantly rotate the hand to that angle.
 
 The Pebble firmware has lookup tables for sine and cosine baked in, but
