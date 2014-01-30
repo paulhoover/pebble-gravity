@@ -1,4 +1,7 @@
-This code is released under the MIT license.
+The font used in this watch face is [Stanislav](http://openfontlibrary.org/en/font/stanislav),
+distributed under the terms of the [SIL Open Font License](http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL).
+
+All other code is released under the MIT license.
 
 Copyright 2013 Peter Hardy
 
