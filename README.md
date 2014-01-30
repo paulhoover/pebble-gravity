@@ -20,7 +20,7 @@ only one that ended up being feasible:
 * We try really hard to remember high-school trigonometry, and use the
   law of sines to calculate the angle at the actual centre point.
   Technically this form of the law has two solutions, but by keeping
-  the destance between virtual and actual centres less than the
+  the distance between virtual and actual centres less than the
   watchface radius we make sure there's only one solution and avoid
   horrible case-checking code.
 * And finally triumphantly rotate the hand to that angle.
