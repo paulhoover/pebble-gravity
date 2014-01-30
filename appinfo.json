@@ -6,27 +6,28 @@
     "versionCode": 5,
     "versionLabel": "2.1.2",
     "watchapp": {
-	"watchface": true
+	    "watchface": true
     },
     "capabilities": [
-	"configurable"
+	    "configurable"
     ],
     "appKeys": {
-	"facestyle": 82
+	    "facestyle": 82
     },
     "resources": {
-	"media": [
-	    {
-		"type":"font",
-		"name":"FONT_STANISLAV_36",
-		"file":"fonts/Stanislav.ttf"
-	    },
-	    {
-		"type":"png",
-		"name":"IMAGE_MENU_ICON",
-		"file":"images/appicon.png",
-		"menuIcon":true
-	    }
-	]
+	    "media": [
+	        {
+		        "type":"font",
+		        "name":"FONT_STANISLAV_36",
+		        "file":"fonts/Stanislav.ttf",
+                "characterRegex":"[12369]"
+	        },
+	        {
+		        "type":"png",
+		        "name":"IMAGE_MENU_ICON",
+		        "file":"images/appicon.png",
+		        "menuIcon":true
+	        }
+	    ]
     }
 }
